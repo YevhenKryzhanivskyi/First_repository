@@ -32,3 +32,15 @@ def normalize_phone_number(phone:str)->str:
         return "+380" + telephone
 wright_number = normalize_phone_number("0932836370")
 print("Нормалізований номер телефону:", wright_number)
+
+def get_upcoming_birthday(users:dict, birthday:str)->str: #Завдання 4
+    try:
+        birth_date = datetime.strptime(birth_date, "%Y-%m-%d").date()
+        today = datetime.today().date()
+        current_year_birthday = today+7
+        if today==current_year_birthday:
+            current_year_birthday = current_year_birthday.replace(year=today.year + 1)
+        days_until_birthday = (current_year_birthday - today).days
+        return f"До наступного дня народження залишилось {days_until_birthday} днів."
+    except ValueError:
+        return "Невірний формат дати. Використовуйте 'YYYY-MM-DD'."
