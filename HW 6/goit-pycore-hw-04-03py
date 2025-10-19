@@ -1,0 +1,52 @@
+import sys
+from pathlib import Path
+from colorama import init, Fore, Style
+
+def print_dir_structure(path: Path, prefix=""):
+    """
+    Рекурсивно виводить структуру директорії path,
+    застосовуючи кольори до імен директорій і файлів.
+    """
+    if not path.exists():
+        print(Fore.RED + f"Помилка: Шлях '{path}' не існує." + Style.RESET_ALL)
+        return
+    if not path.is_dir():
+        print(Fore.RED + f"Помилка: Шлях '{path}' не є директорією." + Style.RESET_ALL)
+        return
+    
+    items = list(path.iterdir())
+    count = len(items)
+    
+    for index, item in enumerate(sorted(items, key=lambda x: (not x.is_dir(), x.name.lower()))):
+        connector = "┗" if index == count - 1 else "┣"
+        if item.is_dir():
+            print(f"{prefix}{connector} 📂{Fore.BLUE}{item.name}{Style.RESET_ALL}")
+            # Формуємо новий префікс для вкладених елементів
+            extension = "   " if index == count - 1 else "┃  "
+            print_dir_structure(item, prefix + extension)
+        else:
+            print(f"{prefix}{connector} 📜{Fore.GREEN}{item.name}{Style.RESET_ALL}")
+
+def main():
+    # Ініціалізація colorama
+    init(autoreset=True)
+    
+    if len(sys.argv) != 2:
+        print(Fore.YELLOW + "Використання: python hw03.py /шлях/до/директорії" + Style.RESET_ALL)
+        sys.exit(1)
+    
+    directory_path = Path(sys.argv[1])
+    
+    # Перевірка існування та типу шляху
+    if not directory_path.exists():
+        print(Fore.RED + f"Помилка: Шлях '{directory_path}' не існує." + Style.RESET_ALL)
+        sys.exit(1)
+    if not directory_path.is_dir():
+        print(Fore.RED + f"Помилка: Шлях '{directory_path}' не є директорією." + Style.RESET_ALL)
+        sys.exit(1)
+    
+    print(f"📦{Fore.BLUE}{directory_path.name}{Style.RESET_ALL}")
+    print_dir_structure(directory_path)
+
+if __name__ == "__main__":
+    main()
