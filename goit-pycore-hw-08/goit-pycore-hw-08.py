@@ -24,9 +24,11 @@ class Phone(Field):
     @staticmethod
     def validate(value):
         value = value.strip()
-        if (not value.isdigit()
-                or len(value) != 10
-                or not value.startswith("0")):
+        if (
+            not value.isdigit()
+            or len(value) != 10
+            or not value.startswith("0")
+        ):
             raise ValueError(
                 "Телефонний номер повинен містити 10 цифр і починатися з 0."
             )
@@ -135,8 +137,12 @@ class AddressBook(UserDict):
 
 
 def save_data(book, filename="addressbook.pkl"):
-    with open(filename, "wb") as f:
-        pickle.dump(book, f)
+    try:
+        with open(filename, "wb") as f:
+            pickle.dump(book, f)
+        print(f"Дані успішно збережено у файл '{filename}'.")
+    except (OSError, pickle.PickleError) as e:
+        print(f"Помилка при збереженні даних: {e}")
 
 
 def load_data(filename="addressbook.pkl"):
