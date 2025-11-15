@@ -8,7 +8,6 @@ from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 
 
-# --- Винятки ---
 class ContactError(Exception):
     pass
 
@@ -25,7 +24,6 @@ class RecordNotFoundError(ContactError):
     pass
 
 
-# --- Декоратор обробки помилок ---
 def input_error(func):
     def wrapper(*args, **kwargs):
         try:
@@ -44,7 +42,6 @@ def input_error(func):
     return wrapper
 
 
-# --- Збереження / завантаження ---
 def save_data(book, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
         pickle.dump(book, f)
@@ -58,7 +55,6 @@ def load_data(filename="addressbook.pkl"):
         return AddressBook()
 
 
-# --- Поля ---
 class Field:
     def __init__(self, value):
         self._value = value
@@ -116,7 +112,6 @@ class Address(Field):
         self._value = new_value
 
 
-# --- Запис контакту ---
 class Record:
     def __init__(self, name):
         self.name = Name(name)
@@ -168,15 +163,13 @@ class Record:
             return f"Address '{addr}' removed from {self.name.value}."
         return f"Address '{addr}' not found for {self.name.value}."
 
-    # --- День народження ---
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
         return f"Birthday {birthday} added to {self.name.value}."
 
-    # --- Вивід ---
     def __str__(self):
         phones = "; ".join(p.value for p in self.phones) or "No phones"
-        addresses = "; ".join(a.value for a in self.addresses) or "No addresses"
+        addresses = "; ".join(a.value for a in self.addresses) or "No address"
         bday = f", birthday: {self.birthday}" if self.birthday else ""
         return (
             f"Contact: {self.name.value}, Phones: {phones}, "
@@ -184,7 +177,6 @@ class Record:
         )
 
 
-# --- Адресна книга ---
 class AddressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
@@ -221,7 +213,6 @@ class AddressBook(UserDict):
         return result
 
 
-# --- Пошук ---
 @input_error
 def search_contacts(args, book):
     (keyword,) = args
@@ -240,7 +231,6 @@ def search_contacts(args, book):
     return "\n".join(results)
 
 
-# --- Автокомпліт ---
 class HintsCompleter(Completer):
     def __init__(self, commands):
         self.commands = commands
@@ -257,7 +247,6 @@ def guess_command(user_command, known_commands):
     return matches[0] if matches else None
 
 
-# --- Команди ---
 @input_error
 def add_contact(args, book):
     name, phone = args
@@ -344,7 +333,6 @@ def show_addresses(args, book):
     return "; ".join(a.value for a in record.addresses)
 
 
-# --- Головний цикл ---
 def main():
     book = load_data()
     print("=" * 50)
